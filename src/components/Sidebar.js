@@ -1,5 +1,4 @@
 import React from 'react'
-import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
 import Avatar from '@material-ui/core/Avatar';
 import List from '@material-ui/core/List';
@@ -18,13 +17,30 @@ const useStyles = makeStyles((theme) => ({
         ...theme.mixins.toolbar,
       },
       avatar: {
-        backgroundColor: 'pink',
+        margin: theme.spacing(1),
+    backgroundColor: theme.palette.secondary.main,
+     backgroundColor: 'pink',
         color: 'white',
-        fontSize: '100px',
-        margin: '20% auto',
-        height: '15%',
-        width: '60%'
+        fontSize: '600%',
+        margin: '20%',
+        padding: '20%',
+        height: '50%',
+        width: '50%',
       },
+      avatarDiv: {
+        // backgroundColor: 'pink',
+        // color: 'white',
+        // fontSize: '600%',
+        // margin: '20%',
+        // padding: '20%',
+        // height: '50%',
+        // width: '50%',
+        marginTop: theme.spacing(8),
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+      },
+      
 }))
 
 const Sidebar = (props) => {
@@ -37,7 +53,9 @@ const Sidebar = (props) => {
        </IconButton>
      </div>
      <Divider />
+     <div className={classes.avatarDiv}>
      <Avatar className={classes.avatar}>{localStorage.getItem('name')[0].toUpperCase()}</Avatar>
+     </div>
      <Divider />
      <List>{mainListItems}</List>
      <Divider />

@@ -5,7 +5,10 @@ import Grid from "@material-ui/core/Grid";
 import Paper from "@material-ui/core/Paper";
 import Fab from "@material-ui/core/Fab";
 import AddIcon from "@material-ui/icons/Add";
-import Modal from '@material-ui/core/Modal'
+import Modal from '@material-ui/core/Modal';
+import Box from '@material-ui/core/Box';
+
+import ModalPage from './ModalPage';
 
 function rand() {
     return Math.round(Math.random() * 20) - 10;
@@ -25,12 +28,23 @@ function rand() {
 
 const useStyles = makeStyles((theme) => ({
   addIcon: {
-    margin: "20% auto",
+    // marginTop: theme.spacing(10),
+    // marginLeft: theme.spacing(21)
+    marginTop: '17%',
+    marginLeft: '43%'
   },
+  addProject:{
+  //  marginTop: theme.spacing(3),
+  //  marginLeft: theme.spacing(20)
+  marginTop: '8%',
+  marginLeft: '40%'
+  },
+  
   paper: {
     display: "flex",
     overflow: "auto",
     flexDirection: "column",
+    borderRadius: '10px',
   },
   paper1: {
     position: 'absolute',
@@ -59,22 +73,25 @@ const CardPlus = () => {
     setOpen(false);
   };
 
-  const body = (
-    <div style={modalStyle} className={classes.paper1}>
-      <h2 id="simple-modal-title">Text in a modal</h2>
-      <p id="simple-modal-description">
-        Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
-      </p>
+  // const body = (
+  //   <div style={modalStyle} className={classes.paper1}>
+  //     <h2 id="simple-modal-title">Text in a modal</h2>
+  //     <p id="simple-modal-description">
+  //       Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
+  //     </p>
       
-    </div>
-  );
+  //   </div>
+  // );
 
   return (
     <Grid item xs={12} md={4} lg={4}>
       <Paper className={fixedHeightPaper}>
         <Fab color="primary" aria-label="add" onClick={handleOpen} className={classes.addIcon}>
           <AddIcon />
+          
         </Fab>
+        <Box className={classes.addProject} component="h4" display="block"> Add Project</Box>
+        
       </Paper>
       <Modal
         open={open}
@@ -82,7 +99,7 @@ const CardPlus = () => {
         aria-labelledby="simple-modal-title"
         aria-describedby="simple-modal-description"
       >
-        {body}
+        <ModalPage modalStyle={modalStyle}/>
       </Modal>
     </Grid>
   );

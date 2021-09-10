@@ -45,28 +45,85 @@ const useStyles = makeStyles(theme => ({
 export default function SignIn() {
   
   const classes = useStyles();
-  const [email,setEmail] = useState("");
+    const [email,setEmail] = useState("");
     const [password,setPassword] = useState("");
+    const [emailError,setEmailError] = useState("");
+    const [passwordError,setPasswordError] = useState("");
+    const [backendError,setBackendError] = useState("");
+    const [showPassword, setShowPassword] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
+    const [rememberMe, setRememberMe] = useState(false);
     const history = useHistory()
 
     async function onLogin(e){
+    
+      setIsLoading(true);
        e.preventDefault();
-       try {
-       const response = await axios({
+       const isValid = validate();
+       if(isValid){
+      console.log(email,password)
+      await axios({
         method: "POST",
         url: "http://192.168.1.119:5000/api/logger/login",
         headers: { "Content-Type": "application/json" },
-        data: { email: email, password: password},
+        data: { email: email || localStorage.getItem('email') , password: password || localStorage.getItem('password')},
       })
-      console.log(response)
-      console.log(response.data.token)
-      cookie.save('token' , response.data.token)
-      localStorage.setItem('name', response.data.name)
-      history.push('/')
-    }catch (error){
-      console.log(error)
-    
+       .then(response => {  
+         setIsLoading(false);
+         console.log(response)
+         console.log(response.data.token)
+         cookie.save('token' , response.data.token)
+         localStorage.setItem('name', response.data.name)
+         history.push('/')
+       })
+       .catch (error => {  
+         console.log(error.response)
+         setIsLoading(false);
+       
+         setBackendError(error.response.data.error.message)
+       
+       })
+      //   await axios({
+      //   method: "POST",
+      //   url: "http://192.168.1.119:5000/api/logger/login",
+      //   headers: { "Content-Type": "application/json" },
+      //   data: { email: email, password: password},
+      // })
+      // console.log(response)
+      // console.log(response.data.token)
+      // cookie.save('token' , response.data.token)
+      // localStorage.setItem('name', response.data.name)
+      // history.push('/')
+      }
+      else{
+        setIsLoading(false);
+      }
+      if(rememberMe){
+        localStorage.setItem('email', email, );
+        localStorage.setItem( 'password',password);
+        localStorage.setItem('rememberMe',rememberMe);
+        }
     }
+
+    const validate = () => {
+    
+      let emailError = "";
+      let passwordError = "";
+  
+      if(!localStorage.getItem('email')&& !email.includes('@')){  
+        emailError = "Empty or Invalid Email"
+      }
+  
+      if(!localStorage.getItem('password') && !password){  
+        passwordError = "Password cannot be blank"
+      }
+
+      if(emailError || passwordError) {  
+        setEmailError(emailError)
+        setPasswordError(passwordError)
+        return false;
+      }
+      return true;
     }
 
   return (
@@ -90,9 +147,10 @@ export default function SignIn() {
             name="email"
             autoComplete="email"
             autoFocus
-            value={email} 
-            onChange={(e)=> {setEmail(e.target.value);}}
+            value={localStorage.getItem('email')|| email} 
+            onChange={(e)=> {setEmail( e.target.value); }}
           />
+          {emailError ? <div style={{fontSize: 12, color: 'red'}}>{emailError}</div> : ''}
           <TextField
             variant="outlined"
             margin="normal"
@@ -100,24 +158,27 @@ export default function SignIn() {
             fullWidth
             name="password"
             label="Password"
-            type="password"
+            type={showPassword ? 'text' : 'password'}
             id="password"
             autoComplete="current-password"
-            value={password} 
-            onChange={(e)=> {setPassword(e.target.value)}}
+            value={localStorage.getItem('password')|| password} 
+            onChange={(e)=> {setPassword( e.target.value)}}
             InputProps={{
               endAdornment: (
                 <InputAdornment>
-                  <IconButton>
-                    <VisibilityOffSharpIcon />
+                  <IconButton onClick={() => {setShowPassword(!showPassword)}}>
+                    {showPassword ? <VisibilitySharpIcon/> : <VisibilityOffSharpIcon/> }
                   </IconButton>
                 </InputAdornment>
               )
             }}
           />
+          {passwordError ? <div style={{fontSize: 12, color: 'red'}}>{passwordError}</div> : ''}
+          {backendError ? <div style={{fontSize: 12, color: 'red'}}>{backendError}</div> : ''}
           <FormControlLabel
-            control={<Checkbox value="remember" color="primary" />}
+            control={<Checkbox value="remember" color="primary" checked={ rememberMe}/>}
             label="Remember me"
+            onChange={() => {  setRememberMe(!rememberMe)}}
           />
           <Button
             type="submit"
@@ -127,7 +188,7 @@ export default function SignIn() {
             className={classes.submit}
             onClick={(e) => {onLogin(e)}}
           >
-            Sign In
+           { isLoading ? 'Loading...' : 'Sign In'} 
           </Button>
           <Grid container>
             <Grid item xs>
@@ -136,7 +197,7 @@ export default function SignIn() {
               </Link>
             </Grid>
             <Grid item>
-              <Link href="#" variant="body2">
+              <Link href="/register" variant="body2">
                 {"Don't have an account? Sign Up"}
               </Link>
             </Grid>

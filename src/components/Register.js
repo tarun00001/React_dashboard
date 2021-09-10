@@ -46,22 +46,88 @@ export default function SignUp() {
   const [email,setEmail] = useState("");
     const [password,setPassword] = useState("");
     const [cpassword,setcPassword] = useState("");
+    const [nameError,setNameError] = useState("");
+    const [emailError,setEmailError] = useState("");
+    const [passwordError,setPasswordError] = useState("");
+    const [cpasswordError,setcPasswordError] = useState("");
+    const [donotMatch,setDonotMatch] = useState("");
+    const [error,setError] = useState("");
+    const [showPassword, setShowPassword] = useState(false);
+    const [showcPassword, setShowcPassword] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
 
     async function onRegister(e){
+      setIsLoading(true);
         e.preventDefault();
-        try {
-        const response = await axios({
+        const isValid = validate();
+    if(isValid){
+        await axios({
          method: "POST",
          url: "http://192.168.1.119:5000/api/logger/register",
          headers: { "Content-Type": "application/json" },
          data: { name: name, email: email, password: password, cpassword: cpassword},
-       })
-       console.log(response)
-       alert(response.data.message)
-     }catch (error){
-       console.log(error)
-     }
-     }
+       }).then(response => { 
+        console.log(response)
+        alert(response.data.message)
+        setIsLoading(false);
+      }).catch (error=>{
+       console.log(error.response.data.error)
+       setIsLoading(false);
+       setError(error.response.data.error)
+      })
+     } else{
+      setIsLoading(false);
+    }
+    }
+
+     const validate = () => {
+      let nameError = "";
+      let emailError = "";
+      let passwordError = ""; 
+      let cpasswordError = ""; 
+      let donotMatch ="";
+   
+      if(!name){  
+        nameError = "First Name cannot be blank"
+      }
+  
+      if(!email.includes('@') && !email.includes('.')){  
+        emailError = "Empty or Invalid Email"
+      }
+  
+      if(!password){  
+        passwordError = "Password cannot be blank"
+      }
+  
+      if(!cpassword){  
+        cpasswordError = "Password cannot be blank"
+      }
+
+      if(password !== cpassword){  
+        // alert("Passwords don't match");
+        donotMatch = "Password doesn't match"
+      }
+
+      if(nameError || emailError || passwordError || cpasswordError || donotMatch) {  
+        setNameError(nameError)
+        setEmailError(emailError)
+        setPasswordError(passwordError)
+        setcPasswordError(cpasswordError)
+        setDonotMatch(donotMatch)
+        return false;
+      }
+      return true;
+    }
+
+    const handleClick = () => {
+      setShowPassword(!showPassword)
+    }
+
+    const onHandleClick = () => {
+      setShowcPassword(!showcPassword)
+    }
+
+    const enabled = name.length > 0 && email.length > 0 && password.length > 0 && cpassword.length > 0;
 
   return (
     <Container component="main" maxWidth="xs">
@@ -88,6 +154,7 @@ export default function SignUp() {
                 value={name} 
             onChange={(e)=> {setName(e.target.value)}}
               />
+              {nameError ? <div style={{fontSize: 12, color: 'red'}}>{nameError}</div> : ''}
             </Grid>
            
             <Grid item xs={12}>
@@ -102,6 +169,7 @@ export default function SignUp() {
                 value={email} 
             onChange={(e)=> {setEmail(e.target.value);}}
               />
+              {emailError ? <div style={{fontSize: 12, color: 'red'}}>{emailError}</div> : ''}
             </Grid>
             <Grid item xs={12}>
               <TextField
@@ -110,7 +178,7 @@ export default function SignUp() {
                 fullWidth
                 name="password"
                 label="Password"
-                type="password"
+                type={showPassword ? 'text' : 'password'}
                 id="password"
                 autoComplete="current-password"
                 value={password} 
@@ -118,13 +186,14 @@ export default function SignUp() {
                 InputProps={{
                     endAdornment: (
                       <InputAdornment>
-                        <IconButton>
-                          <VisibilitySharpIcon />
+                        <IconButton onClick={handleClick}>
+                        {showPassword ? <VisibilitySharpIcon/> : <VisibilityOffSharpIcon/> }
                         </IconButton>
                       </InputAdornment>
                     )
                   }}
               />
+              {passwordError ? <div style={{fontSize: 12, color: 'red'}}>{passwordError}</div> : ''}
             </Grid>
             <Grid item xs={12}>
               <TextField
@@ -133,7 +202,7 @@ export default function SignUp() {
                 fullWidth
                 name="cpassword"
                 label="Confirm Password"
-                type="password"
+                type={showcPassword ? 'text' : 'password'}
                 id="cpassword"
                 autoComplete="current-password"
                 value={cpassword} 
@@ -141,13 +210,16 @@ export default function SignUp() {
                 InputProps={{
                     endAdornment: (
                       <InputAdornment>
-                        <IconButton>
-                          <VisibilityOffSharpIcon />
+                        <IconButton onClick={onHandleClick}>
+                        {showcPassword ? <VisibilitySharpIcon/> : <VisibilityOffSharpIcon/> }
                         </IconButton>
                       </InputAdornment>
                     )
                   }}
               />
+              {cpasswordError ? <div style={{fontSize: 12, color: 'red'}}>{cpasswordError}</div> : ''}
+              {donotMatch ? <div style={{fontSize: 12, color: 'red'}}>{donotMatch}</div> : ''}
+              {error ? <div style={{fontSize: 12, color: 'red'}}>{error}</div> : ''}
             </Grid>
             <Grid item xs={12}>
               <FormControlLabel
@@ -161,14 +233,15 @@ export default function SignUp() {
             fullWidth
             variant="contained"
             color="primary"
+            disabled={!enabled}
             className={classes.submit}
             onClick={(e) => {onRegister(e)}}
           >
-            Sign Up
+          { isLoading ? 'Loading...' : 'Sign Up'} 
           </Button>
           <Grid container justifyContent="center">
             <Grid item>
-              <Link href="#" variant="body2">
+              <Link href="/login" variant="body2">
                 Already have an account? Sign in
               </Link>
             </Grid>

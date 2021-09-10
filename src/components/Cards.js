@@ -8,9 +8,9 @@ const Cards = () => {
     return (
      
     <Grid container spacing={3}>
-        <Card/>
-        <CardPlus/>
        
+        <CardPlus/>
+        <Card/>
       </Grid>
     )
 }
