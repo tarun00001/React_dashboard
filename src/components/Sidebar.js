@@ -6,7 +6,9 @@ import Divider from '@material-ui/core/Divider';
 import IconButton from '@material-ui/core/IconButton';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import { mainListItems } from './listItems';
+// import './Sidebar.css'
 import { pink } from '@material-ui/core/colors';
+// import Avatar from 'react-avatar';
 
 const useStyles = makeStyles((theme) => ({
     toolbarIcon: {
@@ -17,12 +19,14 @@ const useStyles = makeStyles((theme) => ({
         ...theme.mixins.toolbar,
       },
       avatar: {
-        margin: theme.spacing(1),
+        // margin: theme.spacing(1),
     backgroundColor: theme.palette.secondary.main,
      backgroundColor: 'pink',
         color: 'white',
         fontSize: '600%',
-        margin: '20%',
+        // margin: '20%',
+        marginTop: '15%',
+        marginVertical: '15%',
         padding: '20%',
         height: '50%',
         width: '50%',
@@ -35,7 +39,7 @@ const useStyles = makeStyles((theme) => ({
         // padding: '20%',
         // height: '50%',
         // width: '50%',
-        marginTop: theme.spacing(8),
+        // marginTop: theme.spacing(8),
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
@@ -54,7 +58,7 @@ const Sidebar = (props) => {
      </div>
      <Divider />
      <div className={classes.avatarDiv}>
-     <Avatar className={classes.avatar}>{localStorage.getItem('name')[0].toUpperCase()}</Avatar>
+     <Avatar className={classes.avatar}>{"T"}</Avatar>
      </div>
      <Divider />
      <List>{mainListItems}</List>
@@ -63,4 +67,6 @@ const Sidebar = (props) => {
     )
 }
 
-export default Sidebar
+export default Sidebar;
+
+//  <Avatar name={localStorage.getItem('name')[0].toUpperCase()} round={true} size="238" />

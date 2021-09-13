@@ -99,7 +99,7 @@ const CardPlus = () => {
         aria-labelledby="simple-modal-title"
         aria-describedby="simple-modal-description"
       >
-        <ModalPage modalStyle={modalStyle}/>
+        <ModalPage modalStyle={modalStyle} className={classes.paper1}/>
       </Modal>
     </Grid>
   );
